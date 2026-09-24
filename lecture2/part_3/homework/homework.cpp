@@ -12,6 +12,24 @@
 int main()
 {
     // TODO: 在这里完成你的代码
+    const std::string gray_path = "assets/gray.jpg";
+    const std::string demo_path = "assets/demo.jpg";
+
+    cv::Mat img = cv::imread(demo_path);
+    if(img.empty())
+    {
+        std::cout<< " img is empty!? check the path !!! "<< std::endl;
+        return -1;
+    }
+    cv::Mat gray;
+    cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
+    cv::imwrite(gray_path, gray);
+
+    cv::circle(gray, cv::Point(200, 200), 20, 1, 10);
+    cv::imshow("gray", gray);
+
+    cv::waitKey(0);
+     
 
     return 0;
 }

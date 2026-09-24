@@ -30,3 +30,17 @@ add_executable(opencv opencv.cpp)
 target_link_libraries(main ${OpenCV_LIBS} fmt::fmt yaml-cpp tools io tasks)
 target_link_libraries(example ${OpenCV_LIBS} io)
 target_link_libraries(opencv ${OpenCV_LIBS} fmt::fmt yaml-cpp tools io tasks)
+
+foreach(target main example opencv)
+    foreach(resource configs assets)
+        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${resource}")
+            add_custom_command(
+                TARGET ${target} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_directory
+                        "${CMAKE_CURRENT_SOURCE_DIR}/${resource}"
+                        "$<TARGET_FILE_DIR:${target}>/${resource}"
+                COMMENT "Copying ${resource} to the build directory"
+            )
+        endif()
+    endforeach()
+endforeach()

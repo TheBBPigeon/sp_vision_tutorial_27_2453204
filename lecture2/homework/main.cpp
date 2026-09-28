@@ -23,7 +23,7 @@ int main()
 
     cv::resize(img, img, cv::Size(640, 480));
     cv::imshow("img", img);
-    if (cv::waitKey(0) == 'q') {
+    if (cv::waitKey(1) == 'q') {
       break;
     }
   }

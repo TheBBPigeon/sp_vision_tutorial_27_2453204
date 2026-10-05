@@ -1,4 +1,5 @@
 #pragma once
+#include <mutex>
 
 struct StatisticsSnapshot
 {
@@ -18,7 +19,10 @@ public:
     StatisticsSnapshot snapshot() const;
 
 private:
-    // TODO: This object is shared by multiple worker threads.
+    // mutex for this statistics class
+    // mutable because we need to acess it in snapshot(), but its a const member function
+    // while lock_guard's construct function is not const
+    mutable std::mutex mutex_;
     int produced_ = 0;
     int processed_ = 0;
     int saved_ = 0;

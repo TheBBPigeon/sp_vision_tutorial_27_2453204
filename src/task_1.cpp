@@ -43,9 +43,21 @@ int main(int argc, char * argv[])
   std::chrono::steady_clock::time_point t;
 
   while (!exiter.exit()) {
-    // Your code start
+    camera.read(img, t);
+    auto armors = yolo.detect(img);
 
-    // Your code end
+    auto_aim::Armor& armor = *(armors.begin());
+    cv::Point2f center = armor.center;
+
+    cv::OutputArray rvec();
+    cv::OutputArray tvec();
+
+    for(auto& armor: armors)
+    {
+      tools::draw_points(img, armor.points);
+      tools::draw_text(img, std::to_string(armor.class_id), armor.center);
+    } 
+    cv::imshow("yolo", img);
   }
 
   return 0;

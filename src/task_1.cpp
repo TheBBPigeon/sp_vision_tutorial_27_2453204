@@ -28,7 +28,7 @@ int main(int argc, char * argv[])
 
   // 初始化工具类
   tools::Exiter exiter;
-  tools::Plotter plotter;   // 注意plotter工具的使用
+  tools::Plotter plotter;  // 注意plotter工具的使用
 
   // 初始化io类
   io::Camera camera(config_path);
@@ -43,21 +43,17 @@ int main(int argc, char * argv[])
   std::chrono::steady_clock::time_point t;
 
   while (!exiter.exit()) {
+    q = gimbal.q(t);
+    solver.set_R_gimbal2world(q);
+
     camera.read(img, t);
     auto armors = yolo.detect(img);
 
-    auto_aim::Armor& armor = *(armors.begin());
-    cv::Point2f center = armor.center;
-
-    cv::OutputArray rvec();
-    cv::OutputArray tvec();
-
-    for(auto& armor: armors)
-    {
-      tools::draw_points(img, armor.points);
-      tools::draw_text(img, std::to_string(armor.class_id), armor.center);
-    } 
-    cv::imshow("yolo", img);
+    if (!armors.empty()) {
+      auto & armor = armors.front();
+      solver.solve(armor);
+      gimbal.send(true, false, armor.ypd_in_world[0], armor.ypd_in_world[1]);
+    }
   }
 
   return 0;
